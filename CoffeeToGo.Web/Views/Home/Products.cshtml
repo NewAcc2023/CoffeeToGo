@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Coffee>
+
+@{
+	ViewData["Title"] = "Products";
+}
+<div style="background-color:lightgray;">
+	<div style="width:100%;height:56px; background-color:darkgray;" ></div>
+	<div style="width:100%;height:20px;"></div>
+	<div class="container">
+		<div class="w-75 text-center" style="margin: auto;">
+			<h1 class="mx-auto text-uppercase customFont">Coffee To Go</h1>
+		</div>
+		<div class="row d-flex flex-wrap align-items-center ">
+			@foreach (var item in Model)
+			{
+				<div class=" col-12 col-sm-12 col-md-6 col-lg-3 p-1">
+					<div class="card text-light " style="background-color:rgb(150,150,150)">
+						<div class="card-img-top" style="width:100%; height:250px; background-image:url(@item.ImageURL); background-size:contain; background-repeat:no-repeat; background-position:center;"></div>
+
+						<div class="card-body">
+							<div class="fs-5 fw-bold text-uppercase overflow-hidden text-1-line" title="@item.Name">@item.Name</div>
+							<p class="fs-6 fw-bold">@item.Price$</p>
+						</div>
+						<div class="row p-3 d-flex justify-content-center">
+							<a class="btn btn-success col-5 mx-2 px-1">Order</a>
+							<a asp-action="AddToCart" asp-route-id=@item.Id class="btn btn-primary col-5 mx-2 px-1">To Cart</a>
+						</div>
+					</div>
+				</div>
+			}
+
+		</div>
+	</div>
+</div>
