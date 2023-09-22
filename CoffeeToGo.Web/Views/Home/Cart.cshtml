@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Coffee>
+﻿@model List<CartItemModel>
 
 <section class="min-vh-100" style="background-color:lightgray;">
 	<div style="width:100%;height:56px; background-color:darkgray;"></div>
@@ -17,66 +17,71 @@
 						</p>
 					</div>
 				</div>
-				@foreach(var item in Model)
-				{
-					<div id="card-@item.Id" class="card rounded-3 mb-4 ">
-						<div class="card-body p-4">
-							<div class="row d-flex justify-content-between align-items-center">
-								<div class="col-md-2 col-lg-2 col-xl-2">
-									<div class="card-img-top" style="width:100%; height:200px; background-image:url(@item.ImageURL); background-size:contain; background-repeat:no-repeat; background-position:center;"></div>
-								</div>
-								<div class="col-md-3 col-lg-3 col-xl-3">
+				<form asp-action="ConfirmOrder" method="post" >
+					@for(int i = 0; i < Model.Count(); i++)
+					{
+						
+						CartItemModel item = Model[i];
 
-									<p class="lead fw-normal mb-2">@item.Name</p>
+						<input asp-for="@Model[i].Id" />
+						<input asp-for="@Model[i].Name"  />
+						<input asp-for="@Model[i].ImageURL"  />
+						<input asp-for="@Model[i].Price"  />
+						<input asp-for="@Model[i].TotalPrice" />
 
-									<p><span class="text-muted">Size: </span>M <span class="text-muted">Type: </span>Hot</p>
-								</div>
-								<div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-									<button class="btn btn-link px-2"
-											onclick="this.parentNode.querySelector('input[type=number]').stepDown(); CalcTotal('input-@item.Id','totalPriceForOrderItem-@item.Id','@item.Price');">
-										<i class="fas fa-minus"></i>
-									</button>
+						<div id="card-@item.Id" class="card rounded-3 mb-4 ">
+							<div class="card-body p-4">
+								<div class="row d-flex justify-content-between align-items-center">
+									<div class="col-md-2 col-lg-2 col-xl-2">
+										<div class="card-img-top" style="width:100%; height:200px; background-image:url(@item.ImageURL); background-size:contain; background-repeat:no-repeat; background-position:center;"></div>
+									</div>
+									<div class="col-md-3 col-lg-3 col-xl-3">
 
-									<input id="input-@item.Id" disabled min="1" name="quantity" value="1" max="50" type="number"
-										   class="form-control form-control-sm" />
+										<p class="lead fw-normal mb-2">@item.Name</p>
 
-									<button class="btn btn-link px-2"
-											onclick="this.parentNode.querySelector('input[type=number]').stepUp(); CalcTotal('input-@item.Id','totalPriceForOrderItem-@item.Id','@item.Price');">
-										<i class="fas fa-plus"></i>
-									</button>
-								</div>
-								<div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-									<h5 class="mb-0"><span id="totalPriceForOrderItem-@item.Id">@item.Price</span><span>$</span></h5>
-								</div>
-								<div class="col-md-1 col-lg-1 col-xl-1 text-end">
+										<p><span class="text-muted">Size: </span>M <span class="text-muted">Type: </span>Hot</p>
+									</div>
+									<div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+										<button type="button" class="btn px-2"
+												onclick="this.parentNode.querySelector('input[type=number]').stepDown(); CalcTotal('input-@item.Id','totalPriceForOrderItem-@item.Id','@item.Price');">
+											<i class="fas fa-minus"></i>
+										</button>
 
-									@*onclick="DeleteCard('card-@item.Id')"*@
-									<a class="text-danger" asp-action="DeleteFromCart" asp-route-id=@item.Id><i class="fas fa-trash fa-lg"></i></a>
+										<input id="input-@item.Id" min="1" asp-for="@Model[i].Quantity" value="1" max="50" type="number"
+											   class="form-control form-control-sm" />
+
+										<button type="button" class="btn px-2"
+												onclick="this.parentNode.querySelector('input[type=number]').stepUp(); CalcTotal('input-@item.Id','totalPriceForOrderItem-@item.Id','@item.Price');">
+											<i class="fas fa-plus"></i>
+										</button>
+									</div>
+									<div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+										<h5 class="mb-0"><span id="totalPriceForOrderItem-@item.Id">@item.Price</span><span>$</span></h5>
+									</div>
+									<div class="col-md-1 col-lg-1 col-xl-1 text-end">
+
+										@*onclick="DeleteCard('card-@item.Id')"*@
+										<a class="text-danger" asp-action="DeleteFromCart" asp-route-id=@item.Id><i class="fas fa-trash fa-lg"></i></a>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				}
-				
+					}
 
-				<div class="card mb-4">
-					<div class="card-body p-4 d-flex flex-row">
-						<div class="form-outline flex-fill">
-							<input type="text" class="form-control form-control-lg" />
-							<label class="form-label" for="form1">Discound code</label>
+
+					<div class="card mb-4">
+						<div class="card-body p-4 d-flex flex-row">
+							<div class="form-outline flex-fill">
+								<input type="text" class="form-control form-control-lg" />
+								<label class="form-label" for="form1">Discound code</label>
+							</div>
+							<button type="button" class="btn btn-outline-warning btn-lg ms-3">Apply</button>
 						</div>
-						<button type="button" class="btn btn-outline-warning btn-lg ms-3">Apply</button>
 					</div>
-				</div>
-
-				<div class="card">
-					<div class="card-body">
-						<button type="button" class="btn btn-warning btn-block btn-lg">Proceed to Pay</button>
-					</div>
-				</div>
-
+							<button type="submit" class="btn btn-warning btn-block btn-lg">Proceed to Pay</button>
+						
+				</form>
 			</div>
 		</div>
 	</div>
 </section>
-

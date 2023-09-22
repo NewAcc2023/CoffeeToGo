@@ -22,6 +22,29 @@ namespace CoffeeToGo.Web.Controllers
 		{
 			return View();
 		}
+		[HttpPost]
+		public IActionResult PerformOrder()
+		{
+
+			return View("OrderSuccess");
+		}
+
+		[HttpPost]
+		public IActionResult ConfirmOrder(List<CartItemModel> model)
+		{
+			decimal totalOrderPrice = 0;
+            foreach (var item in model)
+            {
+				item.TotalPrice = item.Price * item.Quantity;
+				totalOrderPrice += item.TotalPrice;
+            }
+			ViewData["TotalForOrder"] = totalOrderPrice;
+            return View(model);
+		}
+
+		
+
+
 		[ResponseCache(NoStore = true)]
 		public IActionResult AddToCart(int id)
 		{
@@ -88,11 +111,25 @@ namespace CoffeeToGo.Web.Controllers
 		{
 			if (Request.Cookies["Cart"] == null)
 			{
-				return View(new List<Coffee>());
+				return View(new List<CartItemModel>());
 			}
 			else
 			{
-				IEnumerable<Coffee> cartItems = JsonConvert.DeserializeObject<IEnumerable<Coffee>>(Request.Cookies["Cart"]);
+				IEnumerable<Coffee> selectedCoffees = JsonConvert.DeserializeObject<IEnumerable<Coffee>>(Request.Cookies["Cart"]);
+				List<CartItemModel> cartItems = new List<CartItemModel>();
+				foreach (var item in selectedCoffees)
+				{
+					cartItems.Add(new CartItemModel()
+					{
+						Id = item.Id,
+						Name = item.Name,
+						ImageURL = item.ImageURL,
+						Price = item.Price,
+						Quantity = 1,
+						TotalPrice = 1 * item.Price
+					});
+					
+				}
 				return View(cartItems);
 			}
 		}
