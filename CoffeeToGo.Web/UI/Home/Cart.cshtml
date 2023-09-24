@@ -20,14 +20,11 @@
 				<form asp-action="ConfirmOrder" method="post" >
 					@for(int i = 0; i < Model.Count(); i++)
 					{
-						
 						CartItemModel item = Model[i];
-
-						<input asp-for="@Model[i].Id" />
-						<input asp-for="@Model[i].Name"  />
-						<input asp-for="@Model[i].ImageURL"  />
-						<input asp-for="@Model[i].Price"  />
-						<input asp-for="@Model[i].TotalPrice" />
+						<input hidden asp-for="@Model[i].Id" />
+						<input hidden asp-for="@Model[i].Name" />
+						<input hidden asp-for="@Model[i].ImageURL" />
+						<input hidden asp-for="@Model[i].Price" />
 
 						<div id="card-@item.Id" class="card rounded-3 mb-4 ">
 							<div class="card-body p-4">
@@ -47,7 +44,7 @@
 											<i class="fas fa-minus"></i>
 										</button>
 
-										<input id="input-@item.Id" min="1" asp-for="@Model[i].Quantity" value="1" max="50" type="number"
+										<input id="input-@item.Id" min="1" asp-for="@Model[i].Quantity" value="@Model[i].Quantity" max="50" type="number"
 											   class="form-control form-control-sm" />
 
 										<button type="button" class="btn px-2"
@@ -56,7 +53,7 @@
 										</button>
 									</div>
 									<div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-										<h5 class="mb-0"><span id="totalPriceForOrderItem-@item.Id">@item.Price</span><span>$</span></h5>
+										<h5 class="mb-0"><span onload="this.Value" id="totalPriceForOrderItem-@item.Id">@(item.Price * item.Quantity)</span><span>$</span></h5>
 									</div>
 									<div class="col-md-1 col-lg-1 col-xl-1 text-end">
 
@@ -78,7 +75,16 @@
 							<button type="button" class="btn btn-outline-warning btn-lg ms-3">Apply</button>
 						</div>
 					</div>
-							<button type="submit" class="btn btn-warning btn-block btn-lg">Proceed to Pay</button>
+					@if(Model.Count == 0)
+					{
+						<button type="button" onclick="alert('Empty Cart, select products to proceed')" class="btn btn-warning btn-block btn-lg">Proceed to Pay</button>
+					}
+					else
+					{
+						<button type="submit" class="btn btn-warning btn-block btn-lg">Proceed to Pay</button>
+
+					}
+
 						
 				</form>
 			</div>
